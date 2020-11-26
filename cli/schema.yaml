@@ -1,0 +1,34 @@
+# Schema for the CLI
+name: go-cli
+description: An example CLI app written using Go.
+flags:
+  # Don't change this flag definition
+  - name: config
+    description: Path to configuration file.
+    default: config.json
+    unexported: true
+    var: File
+
+  - name: gopher
+    description: Show something awesome.
+    default: false
+
+subcommands:
+  - name: greet
+    var: Greta
+    description: Get a greeting from your creation.
+    flags:
+      - name: name
+        description: Specify your name.
+        default: John Doe
+
+      - name: unexported
+        description: This var won't be configurable through the config file.
+        default: Ohayou Gozaimasu!
+        unexported: true
+
+      - name: custom
+        description: Flag values can be stored in custom variables.
+        default: false
+        unexported: true
+        var: CustomVar
