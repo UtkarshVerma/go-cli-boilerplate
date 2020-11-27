@@ -1,8 +1,8 @@
 package config
 type (
 config struct {
-Gopher bool `json:"gopher,omitempty"`
 File string `json:"-" name:"config",`
+Gopher bool `json:"gopher,omitempty"`
 Greta struct {
 Name string `json:"name,omitempty"`
 Unexported string `json:"-"`

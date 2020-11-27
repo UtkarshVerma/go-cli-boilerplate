@@ -78,11 +78,11 @@ func (cmd *Command) parse(args ...string) {
 
 func (cmd *Command) usage(isInvalid bool) {
 	name := cmd.flagSet.Name()
-	if strings.HasSuffix(name, CLI.description[0]) {
+	if strings.Contains(name, appName) {
 		fmt.Printf(
-			"%s\n\nUsage:\n\t%s COMMAND [OPTIONS...]\n",
-			appName,
+			"%s\n\nUsage: %s COMMAND [OPTIONS...]\n",
 			CLI.description[1],
+			appName,
 		)
 	} else {
 		args := CLI.Args()
@@ -98,10 +98,10 @@ func (cmd *Command) usage(isInvalid bool) {
 			usage += " COMMAND"
 		}
 
-		fmt.Printf("Usage:\n\t%s [OPTIONS...]\n", usage)
+		fmt.Printf("Usage: %s [OPTIONS...]\n", usage)
 	}
 
-	fmt.Printf("\nFor help:\n\t%s [COMMAND] -help\n", appName)
+	fmt.Printf("For help: %s [COMMAND] -help\n", appName)
 
 	if len(cmd.Subcommands) > 0 {
 		fmt.Println("\nAvailable commands:")

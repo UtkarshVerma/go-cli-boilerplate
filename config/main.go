@@ -28,7 +28,10 @@ func init() {
 		Config.update()
 	} else {
 		Config.update()
-		utils.WriteJSON(Config, Config.File)
+		err := utils.WriteJSON(Config, Config.File)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 

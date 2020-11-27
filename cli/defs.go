@@ -19,8 +19,8 @@ flagSet: flag.NewFlagSet("greet", flag.ExitOnError),
 name = CLI.Subcommands[`greet`].flagSet.String(`name`, `John Doe`, `Specify your name.`)
 unexported = CLI.Subcommands[`greet`].flagSet.String(`unexported`, `Ohayou Gozaimasu!`, `This var won't be configurable through the config file.`)
 customVar = CLI.Subcommands[`greet`].flagSet.Bool(`custom`, false, `Flag values can be stored in custom variables.`)
-gopher = CLI.flagSet.Bool(`gopher`, false, `Show something awesome.`)
 file = CLI.flagSet.String(`config`, `config.json`, `Path to configuration file.`)
+gopher = CLI.flagSet.Bool(`gopher`, false, `Show something awesome.`)
 
 helpFlag = false
 )
