@@ -130,7 +130,7 @@ func (cmd command) defineInitFunc(cmds ...string) {
 		}
 
 		initFunc += "default:\n" +
-			`fmt.Printf("%s: invalid command\n", args[0])` + "\n" +
+			`fmt.Printf("%s: invalid command\n\n", args[0])` + "\n" +
 			flagSet + ".usage(true)\n" +
 			"os.Exit(2)\n" +
 			"}\n} else {\n" +

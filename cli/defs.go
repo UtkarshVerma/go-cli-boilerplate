@@ -42,7 +42,7 @@ switch args[0] {
 case "greet":
 App.Subcommands[`greet`].parse(args[1:]...)
 default:
-fmt.Printf("%s: invalid command\n", args[0])
+fmt.Printf("%s: invalid command\n\n", args[0])
 App.usage(true)
 os.Exit(2)
 }

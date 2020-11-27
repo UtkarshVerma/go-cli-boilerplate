@@ -72,7 +72,7 @@ func (cmd *Command) parse(args ...string) {
 		cmd.flagSet.Parse(args)
 	}
 
-	// WEIRD: Main plan was to use flag.ErrHelp but it isn't working as the docs say they should
+	// WEIRD: Main plan was to use flag.ErrHelp but it isn't working as the docs say it should
 	if helpFlag {
 		cmd.flagSet.Usage()
 		os.Exit(0)
@@ -82,10 +82,11 @@ func (cmd *Command) parse(args ...string) {
 func (cmd *Command) usage(isInvalid bool) {
 	name := cmd.flagSet.Name()
 	if strings.Contains(name, App.name) {
-		fmt.Printf(
-			"%s\n\nUsage: %s COMMAND [OPTIONS...]\n",
-			App.description, App.name,
-		)
+		if !isInvalid {
+			fmt.Println(App.description)
+			fmt.Println()
+		}
+		fmt.Printf("Usage: %s COMMAND [OPTIONS...]\n", App.name)
 	} else {
 		args := App.Args()
 		if isInvalid || helpFlag {
