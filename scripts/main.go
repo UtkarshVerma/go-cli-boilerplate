@@ -9,9 +9,8 @@ import (
 type (
 	// Command is a type which characterizes the commands/subcommands
 	command struct {
-		Name        string    `yaml:"name,omitempty"`
+		Name        string    `yaml:"name"`
 		Description string    `yaml:"description,omitempty"`
-		Version     string    `yaml:"version,omitempty"`
 		Var         string    `yaml:"var,omitempty"`
 		Flags       flags     `yaml:"flags,omitempty"`
 		Subcommands []command `yaml:"subcommands,omitempty"`
@@ -21,12 +20,17 @@ type (
 )
 
 var (
-	cli     = command{}
-	file, _ = ioutil.ReadFile("cli/schema.yaml")
+	appVersion, cfgFlag string
+	cli                 = command{}
+	file, _             = ioutil.ReadFile("cli/schema.yaml")
 )
 
 func init() {
 	yaml.Unmarshal(file, &cli)
+	yaml.Unmarshal(file, &struct {
+		Cfg *string `yaml:"configFlag,omitempty"`
+		Ver *string `yaml:"version,omitempty"`
+	}{&cfgFlag, &appVersion})
 }
 
 func main() {

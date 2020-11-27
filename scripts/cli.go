@@ -24,34 +24,38 @@ args := os.Args
 %s}
 `
 
-var cliVar, cliStruct, initFunc, flagStr string
+var cliStruct, initFunc, vars string
 
 func generateCLI() {
-	// TODO: Think of a better value for `cliVar`, the one below isn't modular
-	// cliVar = utils.ToPascalCase(cli.Name)
-	cliVar = "CLI"
 	cli.define()
 	cli.defineInitFunc()
+	if appVersion != "" {
+		vars += fmt.Sprintf("appVersion = \"%s\"\n", appVersion)
+		initFunc = "App.flagSet.BoolVar(&versionFlag, `version`, false, `Display version information.`)\n" + initFunc
+	} else {
+		vars += "appVersion string\n"
+	}
 
 	out, _ := os.Create("cli/defs.go")
-	out.Write([]byte(fmt.Sprintf(cliLayout, cliStruct+flagStr, initFunc)))
+	out.Write([]byte(fmt.Sprintf(cliLayout, cliStruct+vars, initFunc)))
 }
 
 func (cmd command) define(cmds ...string) {
 	nestLevel := len(cmds)
 	if nestLevel == 0 {
 		cliStruct = fmt.Sprintf(
-			"// %s is the central struct characterizing the CLI\n"+
-				"%s = &Command{\n"+
-				"description: []string{ \"%s\", \"%s\" },\n"+
+			"// App is the central struct characterizing the CLI\n"+
+				"App = &Command{\n"+
+				"name: \"%s\",\n"+
+				"description: \"%s\",\n"+
 				"flagSet: flag.CommandLine,\n",
-			cliVar, cliVar,
 			cmd.Name, cmd.Description,
 		)
 	} else {
 		cliStruct += fmt.Sprintf(
 			"\"%s\": {\n"+
-				"description: []string{ \"%s\", \"%s\" },\n"+
+				"name: \"%s\",\n"+
+				"description: \"%s\",\n"+
 				"flagSet: flag.NewFlagSet(\"%s\", flag.ExitOnError),\n",
 			cmd.Name,
 			cmd.Name, cmd.Description,
@@ -80,7 +84,7 @@ func (cmd command) define(cmds ...string) {
 }
 
 func (cmd command) defineFlags(cmds ...string) {
-	flagSet := cliVar
+	flagSet := "App"
 	for _, c := range cmds {
 		flagSet += ".Subcommands[`" + c + "`]"
 	}
@@ -98,25 +102,10 @@ func (cmd command) defineFlags(cmds ...string) {
 		}
 		name = utils.ToCamelCase(name)
 
-		flagStr += fmt.Sprintf(
+		vars += fmt.Sprintf(
 			"%s = %s.flagSet.%s(`%s`, %s, `%s`)\n",
 			name, flagSet, kind, flag["name"], value, flag["description"],
 		)
-	}
-
-	if cmd.Name == cli.Name {
-		flagStr += fmt.Sprintf(
-			"\nappName = \"%s\"\n"+
-				"appDesc = \"%s\"\n",
-			cmd.Name,
-			cmd.Description,
-		)
-		if v := cmd.Version; v != "" {
-			flagStr += fmt.Sprintf("appVersion = \"%s\"\n", v)
-			initFunc += flagSet + ".flagSet.BoolVar(&versionFlag, `version`, false, `Display version information.`)\n"
-		} else {
-			flagStr += "appVersion string\n"
-		}
 	}
 
 	initFunc += flagSet + ".flagSet.BoolVar(&helpFlag, `h`, false, `Display the help message.`)\n"
@@ -124,7 +113,7 @@ func (cmd command) defineFlags(cmds ...string) {
 }
 
 func (cmd command) defineInitFunc(cmds ...string) {
-	flagSet := cliVar
+	flagSet := "App"
 	for _, c := range cmds {
 		flagSet += ".Subcommands[`" + c + "`]"
 	}

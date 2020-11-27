@@ -15,9 +15,9 @@ var (
 //go:generate go run ./scripts
 
 func main() {
-	switch cli.CLI.Arg(0) {
+	switch cli.App.Arg(0) {
 	case "greet":
-		name := cli.CLI.Subcommands["greet"].GetFlag("name").(string)
+		name := cli.App.Subcommands["greet"].GetFlag("name").(string)
 		firstName := strings.Split(name, " ")[0]
 		fmt.Printf("Ohayou gozaimasu, %s-san.\n", firstName)
 	}

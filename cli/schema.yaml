@@ -1,14 +1,12 @@
 # Schema for the CLI
 name: go-cli
 version: 0.1
+configFlag: config
 description: An example CLI app written using Go.
 flags:
-  # Don't change this flag definition
   - name: config
     description: Path to configuration file.
     default: config.json
-    unexported: true
-    var: File
 
   - name: gopher
     description: Show something awesome.

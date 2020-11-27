@@ -11,8 +11,8 @@ import (
 type (
 	// Command is a type which characterizes the commands/subcommands
 	Command struct {
-		description []string
-		flagSet     *flag.FlagSet
+		name, description string
+		flagSet           *flag.FlagSet
 
 		Subcommands map[string]*Command
 	}
@@ -56,16 +56,16 @@ func (cmd *Command) GetDefault(f string) string {
 func (cmd *Command) parse(args ...string) {
 	for _, subcmd := range cmd.Subcommands {
 		if len(subcmd.Subcommands) > 0 {
-			subcmd.description = subcmd.describe()
+			subcmd.describe()
 		}
 	}
 	cmd.flagSet.Usage = func() { cmd.usage(false) }
 
-	if cmd == CLI {
+	if cmd == App {
 		flag.CommandLine.Parse(args)
 
 		if versionFlag {
-			fmt.Printf("%s v%s\n", appName, appVersion)
+			fmt.Printf("%s v%s\n", App.name, appVersion)
 			os.Exit(0)
 		}
 	} else {
@@ -81,19 +81,18 @@ func (cmd *Command) parse(args ...string) {
 
 func (cmd *Command) usage(isInvalid bool) {
 	name := cmd.flagSet.Name()
-	if strings.Contains(name, appName) {
+	if strings.Contains(name, App.name) {
 		fmt.Printf(
 			"%s\n\nUsage: %s COMMAND [OPTIONS...]\n",
-			appDesc,
-			appName,
+			App.description, App.name,
 		)
 	} else {
-		args := CLI.Args()
+		args := App.Args()
 		if isInvalid || helpFlag {
 			args = args[:len(args)-1]
 		}
 
-		var usage string = appName
+		var usage string = App.name
 		if len(args) > 0 {
 			usage += " " + strings.Join(args, " ")
 		}
@@ -104,7 +103,7 @@ func (cmd *Command) usage(isInvalid bool) {
 		fmt.Printf("Usage: %s [OPTIONS...]\n", usage)
 	}
 
-	fmt.Printf("For help: %s [COMMAND] -help\n", appName)
+	fmt.Printf("For help: %s [COMMAND] -help\n", App.name)
 
 	if len(cmd.Subcommands) > 0 {
 		fmt.Println("\nAvailable commands:")
@@ -118,8 +117,7 @@ func (cmd *Command) usage(isInvalid bool) {
 		sort.Strings(keys)
 		for _, key := range keys {
 			subcmd := cmd.Subcommands[key]
-			desc := subcmd.description
-			fmt.Printf("\t%-20s%s\n", desc[0], desc[1])
+			fmt.Printf("\t%-20s%s\n", subcmd.name, subcmd.description)
 		}
 	}
 
@@ -135,14 +133,16 @@ func (cmd *Command) usage(isInvalid bool) {
 						f.DefValue = fmt.Sprintf("\"%s\"", f.DefValue)
 					}
 					fmt.Printf("\t-%-19s%s\n", f.Name, f.Usage)
-					fmt.Printf("\t %-21s(default: %v)\n", " ", f.DefValue)
+					if f.Name != "version" {
+						fmt.Printf("\t %-21s(default: %v)\n", " ", f.DefValue)
+					}
 				}
 			},
 		)
 	}
 }
 
-func (cmd *Command) describe() []string {
+func (cmd *Command) describe() {
 	subcmds := make([]string, len(cmd.Subcommands))
 	i := 0
 	for _, v := range cmd.Subcommands {
@@ -161,5 +161,5 @@ func (cmd *Command) describe() []string {
 	} else {
 		desc = append(desc, fmt.Sprintf("SUBCOMMAND can be %s.", subcmds[0]))
 	}
-	return desc
+	cmd.name, cmd.description = desc[0], desc[1]
 }

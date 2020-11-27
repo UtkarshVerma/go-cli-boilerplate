@@ -8,8 +8,10 @@ import (
 )
 
 const configLayout = `package config
+const configFlag = "%s"
 type (
 config struct {
+File string` + "`json:\"-\"`" + `
 %s}
 )
 `
@@ -19,7 +21,7 @@ var config string
 func generateConfig() {
 	cli.traverse()
 	out, _ := os.Create("config/defs.go")
-	out.Write([]byte(fmt.Sprintf(configLayout, config)))
+	out.Write([]byte(fmt.Sprintf(configLayout, cfgFlag, config)))
 }
 
 func (cmd command) traverse() {
@@ -37,6 +39,9 @@ func (cmd command) traverse() {
 			var isCustomVar bool
 
 			name := flag["name"]
+			if cmd.Name == cli.Name && name == cfgFlag {
+				continue
+			}
 			if v, ok := flag["var"]; ok {
 				name = v
 				isCustomVar = true
@@ -50,7 +55,7 @@ func (cmd command) traverse() {
 
 			tag := fmt.Sprintf("`json:\"%s\"", jsonTag)
 			if isCustomVar {
-				tag += fmt.Sprintf(" name:\"%s\",", flag["name"])
+				tag += fmt.Sprintf(" name:\"%s\"", flag["name"])
 			}
 			tag += "`"
 

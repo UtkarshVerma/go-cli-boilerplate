@@ -13,30 +13,32 @@ var (
 	TimeLayout = "2006-01-02T15:04:05-07:00"
 
 	// Config is the central configuration struct
-	Config = &config{
-		File: cli.CLI.GetFlag("config").(string),
-	}
+	Config = &config{}
 )
 
 func init() {
-	// Create config file if not present
-	if utils.FileExists(Config.File) {
-		err := utils.ReadJSON(Config.File, Config)
-		if err != nil {
-			log.Fatal(err)
-		}
-		Config.update()
-	} else {
-		Config.update()
-		err := utils.WriteJSON(Config, Config.File)
-		if err != nil {
-			log.Fatal(err)
+	if configFlag != "" {
+		Config.File = cli.App.GetFlag(configFlag).(string)
+
+		// Create config file if not present
+		if utils.FileExists(Config.File) {
+			err := utils.ReadJSON(Config.File, Config)
+			if err != nil {
+				log.Fatal(err)
+			}
+			Config.update()
+		} else {
+			Config.update()
+			err := utils.WriteJSON(Config, Config.File)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
 
 func (config *config) update() {
-	update(cli.CLI, reflect.ValueOf(config).Elem())
+	update(cli.App, reflect.ValueOf(config).Elem())
 }
 
 func update(from *cli.Command, to reflect.Value) {
