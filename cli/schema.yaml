@@ -1,5 +1,6 @@
 # Schema for the CLI
 name: go-cli
+version: 0.1
 description: An example CLI app written using Go.
 flags:
   # Don't change this flag definition

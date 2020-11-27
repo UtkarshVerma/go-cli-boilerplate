@@ -22,12 +22,18 @@ customVar = CLI.Subcommands[`greet`].flagSet.Bool(`custom`, false, `Flag values 
 file = CLI.flagSet.String(`config`, `config.json`, `Path to configuration file.`)
 gopher = CLI.flagSet.Bool(`gopher`, false, `Show something awesome.`)
 
+appName = "go-cli"
+appDesc = "An example CLI app written using Go."
+appVersion = "1.2"
+
 helpFlag = false
+versionFlag = false
 )
 func init() {
 args := os.Args
 CLI.Subcommands[`greet`].flagSet.BoolVar(&helpFlag, `h`, false, `Display the help message.`)
 CLI.Subcommands[`greet`].flagSet.BoolVar(&helpFlag, `help`, false, `Display the help message.`)
+CLI.flagSet.BoolVar(&versionFlag, `version`, false, `Display version information.`)
 CLI.flagSet.BoolVar(&helpFlag, `h`, false, `Display the help message.`)
 CLI.flagSet.BoolVar(&helpFlag, `help`, false, `Display the help message.`)
 CLI.parse(args[1:]...)

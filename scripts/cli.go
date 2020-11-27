@@ -17,6 +17,7 @@ import (
 var (
 %s
 helpFlag = false
+versionFlag = false
 )
 func init() {
 args := os.Args
@@ -83,6 +84,7 @@ func (cmd command) defineFlags(cmds ...string) {
 	for _, c := range cmds {
 		flagSet += ".Subcommands[`" + c + "`]"
 	}
+
 	for _, flag := range cmd.Flags {
 		value := flag["default"]
 		kind := strings.Title(utils.TypeOf(value))
@@ -101,6 +103,22 @@ func (cmd command) defineFlags(cmds ...string) {
 			name, flagSet, kind, flag["name"], value, flag["description"],
 		)
 	}
+
+	if cmd.Name == cli.Name {
+		flagStr += fmt.Sprintf(
+			"\nappName = \"%s\"\n"+
+				"appDesc = \"%s\"\n",
+			cmd.Name,
+			cmd.Description,
+		)
+		if v := cmd.Version; v != "" {
+			flagStr += fmt.Sprintf("appVersion = \"%s\"\n", v)
+			initFunc += flagSet + ".flagSet.BoolVar(&versionFlag, `version`, false, `Display version information.`)\n"
+		} else {
+			flagStr += "appVersion string\n"
+		}
+	}
+
 	initFunc += flagSet + ".flagSet.BoolVar(&helpFlag, `h`, false, `Display the help message.`)\n"
 	initFunc += flagSet + ".flagSet.BoolVar(&helpFlag, `help`, false, `Display the help message.`)\n"
 }

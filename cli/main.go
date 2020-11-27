@@ -8,8 +8,6 @@ import (
 	"strings"
 )
 
-var appName string = CLI.description[0]
-
 type (
 	// Command is a type which characterizes the commands/subcommands
 	Command struct {
@@ -65,6 +63,11 @@ func (cmd *Command) parse(args ...string) {
 
 	if cmd == CLI {
 		flag.CommandLine.Parse(args)
+
+		if versionFlag {
+			fmt.Printf("%s v%s\n", appName, appVersion)
+			os.Exit(0)
+		}
 	} else {
 		cmd.flagSet.Parse(args)
 	}
@@ -81,7 +84,7 @@ func (cmd *Command) usage(isInvalid bool) {
 	if strings.Contains(name, appName) {
 		fmt.Printf(
 			"%s\n\nUsage: %s COMMAND [OPTIONS...]\n",
-			CLI.description[1],
+			appDesc,
 			appName,
 		)
 	} else {
