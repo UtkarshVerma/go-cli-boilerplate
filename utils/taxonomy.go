@@ -5,7 +5,7 @@ import (
 	"unicode"
 )
 
-// ToCamelCase converts `in` to PascalCase
+// ToCamelCase converts `in` to camelCase.
 func ToCamelCase(in string) (out string) {
 	for i, token := range splitTokens(in) {
 		if i != 0 {
@@ -16,7 +16,7 @@ func ToCamelCase(in string) (out string) {
 	return
 }
 
-// ToPascalCase converts `in` to PascalCase
+// ToPascalCase converts `in` to PascalCase.
 func ToPascalCase(in string) (out string) {
 	for _, token := range splitTokens(in) {
 		out += strings.Title(token)
@@ -24,12 +24,12 @@ func ToPascalCase(in string) (out string) {
 	return
 }
 
-// ToKebabCase converts `in` to kebab-case
+// ToKebabCase converts `in` to kebab-case.
 func ToKebabCase(in string) string {
 	return strings.Join(splitTokens(in), "-")
 }
 
-// ToSnakeCase converts `in` to kebab-case
+// ToSnakeCase converts `in` to snake_case.
 func ToSnakeCase(in string) string {
 	return strings.Join(splitTokens(in), "_")
 }

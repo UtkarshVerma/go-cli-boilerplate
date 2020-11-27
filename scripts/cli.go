@@ -44,7 +44,7 @@ func (cmd command) define(cmds ...string) {
 	nestLevel := len(cmds)
 	if nestLevel == 0 {
 		cliStruct = fmt.Sprintf(
-			"// App is the central struct characterizing the CLI\n"+
+			"// App is the central struct characterizing the CLI.\n"+
 				"App = &Command{\n"+
 				"name: \"%s\",\n"+
 				"description: \"%s\",\n"+
@@ -96,15 +96,11 @@ func (cmd command) defineFlags(cmds ...string) {
 			value = "`" + value + "`"
 		}
 
-		name := flag["name"]
-		if v, ok := flag["var"]; ok {
-			name = v
-		}
-		name = utils.ToCamelCase(name)
+		varID := utils.ToCamelCase(cmd.Name + "-" + flag["name"])
 
 		vars += fmt.Sprintf(
 			"%s = %s.flagSet.%s(`%s`, %s, `%s`)\n",
-			name, flagSet, kind, flag["name"], value, flag["description"],
+			varID, flagSet, kind, flag["name"], value, flag["description"],
 		)
 	}
 
@@ -130,7 +126,7 @@ func (cmd command) defineInitFunc(cmds ...string) {
 		}
 
 		initFunc += "default:\n" +
-			`fmt.Printf("%s: invalid command\n\n", args[0])` + "\n" +
+			`fmt.Printf("%s: invalid command\n", args[0])` + "\n" +
 			flagSet + ".usage(true)\n" +
 			"os.Exit(2)\n" +
 			"}\n} else {\n" +

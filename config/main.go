@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	// TimeLayout is the time layout which is followed everywhere
+	// TimeLayout is the time layout which is followed everywhere.
 	TimeLayout = "2006-01-02T15:04:05-07:00"
 
-	// Config is the central configuration struct
+	// Config is the central configuration struct.
 	Config = &config{}
 )
 

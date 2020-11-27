@@ -18,12 +18,12 @@ type (
 	}
 )
 
-// Args returns the arguments passed to `cmd` command/subcommand
+// Args returns the arguments passed to `cmd` command/subcommand.
 func (cmd *Command) Args() []string {
 	return cmd.flagSet.Args()
 }
 
-// Arg returns the nth argument passed to `cmd` command/subcommand
+// Arg returns the nth argument passed to `cmd` command/subcommand.
 func (cmd *Command) Arg(n int) string {
 	if n >= len(cmd.Args()) {
 		return ""
@@ -31,7 +31,7 @@ func (cmd *Command) Arg(n int) string {
 	return cmd.Args()[n]
 }
 
-// GetFlags returns the flags associated with `cmd` command/subcommand
+// GetFlags returns the flags associated with `cmd` command/subcommand.
 func (cmd *Command) GetFlags() *map[string]interface{} {
 	flags := map[string]interface{}{}
 	cmd.flagSet.VisitAll(
@@ -42,13 +42,13 @@ func (cmd *Command) GetFlags() *map[string]interface{} {
 	return &flags
 }
 
-// GetFlag returns the value of `cmd` command/subcommand's `flag` flag
+// GetFlag returns the value of `cmd` command/subcommand's `flag` flag.
 func (cmd *Command) GetFlag(flag string) interface{} {
 	flags := *cmd.GetFlags()
 	return flags[flag]
 }
 
-// GetDefault returns the default value `cmd` command/subcommand's `f` flag
+// GetDefault returns the default value `cmd` command/subcommand's `f` flag.
 func (cmd *Command) GetDefault(f string) string {
 	return cmd.flagSet.Lookup(f).DefValue
 }
@@ -134,7 +134,7 @@ func (cmd *Command) usage(isInvalid bool) {
 						f.DefValue = fmt.Sprintf("\"%s\"", f.DefValue)
 					}
 					fmt.Printf("\t-%-19s%s\n", f.Name, f.Usage)
-					if f.Name != "version" {
+					if f.Name != "version" && f.DefValue != `""` && f.DefValue != "false" {
 						fmt.Printf("\t %-21s(default: %v)\n", " ", f.DefValue)
 					}
 				}

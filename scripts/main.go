@@ -11,7 +11,6 @@ type (
 	command struct {
 		Name        string    `yaml:"name"`
 		Description string    `yaml:"description,omitempty"`
-		Var         string    `yaml:"var,omitempty"`
 		Flags       flags     `yaml:"flags,omitempty"`
 		Subcommands []command `yaml:"subcommands,omitempty"`
 	}

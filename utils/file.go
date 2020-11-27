@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-// ReadJSON reads the `source` JSON file and unmarshals it to `dest` struct
+// ReadJSON reads the `source` JSON file and unmarshals it to `dest` struct.
 func ReadJSON(source string, dest interface{}) error {
 	source = ExpandPath(source)
 	file, err := os.Open(source)
@@ -24,7 +24,7 @@ func ReadJSON(source string, dest interface{}) error {
 	return err
 }
 
-// WriteJSON writes the `source` struct to `dest` as a JSON file
+// WriteJSON writes the `source` struct to `dest` as a JSON file.
 func WriteJSON(source interface{}, dest string) error {
 	dest = ExpandPath(dest)
 	createParents(dest)
@@ -38,7 +38,7 @@ func WriteJSON(source interface{}, dest string) error {
 	return err
 }
 
-// WriteFile writes `content` to `dest` file
+// WriteFile writes `content` to `dest` file.
 func WriteFile(content, dest string) error {
 	dest = ExpandPath(dest)
 	createParents(dest)
@@ -47,14 +47,14 @@ func WriteFile(content, dest string) error {
 	return err
 }
 
-// FileExists tells whether the `file` exists
+// FileExists tells whether the `file` exists.
 func FileExists(file string) bool {
 	file = ExpandPath(file)
 	_, err := os.Stat(file)
 	return !os.IsNotExist(err)
 }
 
-// Create parent folders if non-existent
+// Create parent folders if non-existent.
 func createParents(filePath string) {
 	dir := path.Dir(filePath)
 	_, err := os.Stat(dir)
@@ -65,8 +65,8 @@ func createParents(filePath string) {
 	}
 }
 
-// ExpandPath expands `~` in path `p`, if present, and resolve symlinks
-// TODO: Make the expansion cross-compatible
+// ExpandPath expands `~` in path `p`, if present, and resolve symlinks.
+// TODO: Make the expansion cross-platform.
 func ExpandPath(p string) string {
 	if strings.HasPrefix(p, "~/") {
 		user, _ := user.Current()

@@ -26,12 +26,7 @@ func generateConfig() {
 
 func (cmd command) traverse() {
 	if cmd.Name != cli.Name {
-		name := cmd.Name
-		if cmd.Var != "" {
-			name = cmd.Var
-		}
-		name = utils.ToPascalCase(name)
-		config += name + " struct {\n"
+		config += utils.ToPascalCase(cmd.Name) + " struct {\n"
 	}
 
 	if flags := cmd.Flags; len(flags) > 0 {
@@ -71,12 +66,6 @@ func (cmd command) traverse() {
 	}
 
 	if cmd.Name != cli.Name {
-		tag := fmt.Sprintf("`json:\"%s,omitempty\"", utils.ToSnakeCase(cmd.Name))
-		if cmd.Var != "" {
-			tag += fmt.Sprintf(" name:\"%s\"", cmd.Name)
-		}
-		tag += "`"
-
-		config += fmt.Sprintf("} %s\n", tag)
+		config += fmt.Sprintf("} `json:\"%s,omitempty\"`\n", utils.ToSnakeCase(cmd.Name))
 	}
 }

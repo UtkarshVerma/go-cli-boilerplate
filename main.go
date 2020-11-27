@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"os/user"
 	"strings"
+	"time"
 
 	"github.com/utkarshverma/go-cli-boilerplate/cli"
 	"github.com/utkarshverma/go-cli-boilerplate/config"
@@ -17,8 +19,29 @@ var (
 func main() {
 	switch cli.App.Arg(0) {
 	case "greet":
-		name := cli.App.Subcommands["greet"].GetFlag("name").(string)
-		firstName := strings.Split(name, " ")[0]
-		fmt.Printf("Ohayou gozaimasu, %s-san.\n", firstName)
+		greet()
 	}
+}
+
+func greet() {
+	name := cli.App.Subcommands["greet"].GetFlag("name").(string)
+	if name == "" {
+		user, _ := user.Current()
+		name = user.Name
+	}
+	firstName := strings.Split(name, " ")[0]
+
+	var greeting string
+	switch t := time.Now(); {
+	case t.Hour() < 12:
+		greeting = "Ohayou-gozaimasu"
+	case t.Hour() < 16:
+		greeting = "Konnichiwa"
+	case t.Hour() < 20:
+		greeting = "Konbanwa"
+	default:
+		greeting = "Oyasuminasai"
+	}
+
+	fmt.Printf("%s, %s-san!\n", greeting, firstName)
 }

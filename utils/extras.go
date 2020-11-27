@@ -2,7 +2,7 @@ package utils
 
 import "strconv"
 
-// TypeOf returns the datatype of passed value
+// TypeOf returns the datatype of passed value.
 func TypeOf(value string) string {
 	if _, err := strconv.ParseBool(value); err == nil {
 		return "bool"

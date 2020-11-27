@@ -9,25 +9,11 @@ flags:
     default: config.json
 
   - name: gopher
-    description: Show something awesome.
-    default: false
+    description: Show something awesome!
 
 subcommands:
   - name: greet
-    var: Greta
-    description: Get a greeting from your creation.
+    description: Get a greeting.
     flags:
       - name: name
-        description: Specify your name.
-        default: John Doe
-
-      - name: unexported
-        description: This var won't be configurable through the config file.
-        default: Ohayou Gozaimasu!
-        unexported: true
-
-      - name: custom
-        description: Flag values can be stored in custom variables.
-        default: false
-        unexported: true
-        var: CustomVar
+        description: Specify a custom name.
