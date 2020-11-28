@@ -10,9 +10,9 @@ type (
 	// Command is a type which characterizes the commands/subcommands
 	command struct {
 		Name        string    `yaml:"name"`
-		Description string    `yaml:"description,omitempty"`
-		Flags       flags     `yaml:"flags,omitempty"`
-		Subcommands []command `yaml:"subcommands,omitempty"`
+		Description string    `yaml:"description"`
+		Flags       flags     `yaml:"flags"`
+		Subcommands []command `yaml:"subcommands"`
 	}
 
 	flags []map[string]string
@@ -27,8 +27,8 @@ var (
 func init() {
 	yaml.Unmarshal(file, &cli)
 	yaml.Unmarshal(file, &struct {
-		Cfg *string `yaml:"configFlag,omitempty"`
-		Ver *string `yaml:"version,omitempty"`
+		Cfg *string `yaml:"configFlag"`
+		Ver *string `yaml:"version"`
 	}{&cfgFlag, &appVersion})
 }
 

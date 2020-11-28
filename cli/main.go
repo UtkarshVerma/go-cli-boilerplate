@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
+
+	"github.com/utkarshverma/go-cli-boilerplate/utils"
 )
 
 type (
@@ -42,6 +45,22 @@ func (cmd *Command) GetFlags() *map[string]interface{} {
 	return &flags
 }
 
+// GetRaisedFlags returns the raised flags associated with `cmd` command/subcommand.
+func (cmd *Command) GetRaisedFlags(parent *Command) (flags []string) {
+	parentArgs := os.Args
+	if parent != nil {
+		parentArgs = parent.Args()
+	}
+
+	args := parentArgs[:len(parentArgs)-len(cmd.Args())]
+	for _, arg := range args {
+		if strings.HasPrefix(arg, "-") {
+			flags = append(flags, arg)
+		}
+	}
+	return
+}
+
 // GetFlag returns the value of `cmd` command/subcommand's `flag` flag.
 func (cmd *Command) GetFlag(flag string) interface{} {
 	flags := *cmd.GetFlags()
@@ -49,8 +68,20 @@ func (cmd *Command) GetFlag(flag string) interface{} {
 }
 
 // GetDefault returns the default value `cmd` command/subcommand's `f` flag.
-func (cmd *Command) GetDefault(f string) string {
-	return cmd.flagSet.Lookup(f).DefValue
+func (cmd *Command) GetDefault(f string) (v interface{}) {
+	val := cmd.flagSet.Lookup(f).DefValue
+	valType := utils.TypeOf(val)
+
+	v = val
+	switch valType {
+	case "bool":
+		v, _ = strconv.ParseBool(val)
+	case "int64":
+		v, _ = strconv.ParseInt(val, 10, 64)
+	case "float64":
+		v, _ = strconv.ParseFloat(val, 64)
+	}
+	return
 }
 
 func (cmd *Command) parse(args ...string) {

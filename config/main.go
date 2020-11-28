@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"reflect"
+	"strings"
 
 	"github.com/utkarshverma/go-cli-boilerplate/cli"
 	"github.com/utkarshverma/go-cli-boilerplate/utils"
@@ -16,6 +17,7 @@ var (
 func init() {
 	if configFlag != "" {
 		Config.File = cli.App.GetFlag(configFlag).(string)
+		Config.init()
 
 		// Create config file if not present
 		if utils.FileExists(Config.File) {
@@ -34,11 +36,15 @@ func init() {
 	}
 }
 
-func (config *config) update() {
-	update(cli.App, reflect.ValueOf(config).Elem())
+func (config *config) init() {
+	traverse(nil, cli.App, reflect.ValueOf(config).Elem(), true)
 }
 
-func update(from *cli.Command, to reflect.Value) {
+func (config *config) update() {
+	traverse(nil, cli.App, reflect.ValueOf(config).Elem(), false)
+}
+
+func traverse(parent *cli.Command, from *cli.Command, to reflect.Value, mustInit bool) {
 	fields := to.Type()
 	for i := 0; i < fields.NumField(); i++ {
 		// Reconstruct the flag name, and don't update config flag
@@ -49,22 +55,33 @@ func update(from *cli.Command, to reflect.Value) {
 
 		copyTo := to.Field(i)
 		if to.Field(i).Kind() == reflect.Struct {
-			update(from.Subcommands[field], copyTo)
+			traverse(from, from.Subcommands[field], copyTo, mustInit)
 		} else {
-			mustSet := from.GetDefault(field) != from.GetFlag(field)
+			getVal := from.GetDefault
+			mustSet := true
+			if !mustInit {
+				getVal = from.GetFlag
+				mustSet = false
 
-			switch copyTo.Kind() {
-			case reflect.String:
-				if copyTo.CanSet() && mustSet {
-					copyTo.SetString(from.GetFlag(field).(string))
+				raisedFlags := from.GetRaisedFlags(parent)
+				for _, flag := range raisedFlags {
+					if strings.Contains(flag, field) {
+						mustSet = true
+						break
+					}
 				}
-			case reflect.Int:
-				if copyTo.CanSet() && mustSet {
-					copyTo.SetInt(int64(from.GetFlag(field).(int)))
-				}
-			case reflect.Bool:
-				if copyTo.CanSet() && mustSet {
-					copyTo.SetBool(from.GetFlag(field).(bool))
+			}
+
+			if copyTo.CanSet() && mustSet {
+				switch copyTo.Kind() {
+				case reflect.String:
+					copyTo.SetString(getVal(field).(string))
+				case reflect.Bool:
+					copyTo.SetBool(getVal(field).(bool))
+				case reflect.Float64:
+					copyTo.SetFloat(getVal(field).(float64))
+				case reflect.Int64:
+					copyTo.SetInt(getVal(field).(int64))
 				}
 			}
 		}

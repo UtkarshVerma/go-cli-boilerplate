@@ -58,7 +58,8 @@ func (cmd command) define(cmds ...string) {
 				"description: \"%s\",\n"+
 				"flagSet: flag.NewFlagSet(\"%s\", flag.ExitOnError),\n",
 			cmd.Name,
-			cmd.Name, cmd.Description,
+			cmd.Name,
+			cmd.Description,
 			cmd.Name,
 		)
 	}
@@ -97,7 +98,6 @@ func (cmd command) defineFlags(cmds ...string) {
 		}
 
 		varID := utils.ToCamelCase(cmd.Name + "-" + flag["name"])
-
 		vars += fmt.Sprintf(
 			"%s = %s.flagSet.%s(`%s`, %s, `%s`)\n",
 			varID, flagSet, kind, flag["name"], value, flag["description"],

@@ -31,15 +31,9 @@ func (cmd command) traverse() {
 
 	if flags := cmd.Flags; len(flags) > 0 {
 		for _, flag := range flags {
-			var isCustomVar bool
-
 			name := flag["name"]
 			if cmd.Name == cli.Name && name == cfgFlag {
 				continue
-			}
-			if v, ok := flag["var"]; ok {
-				name = v
-				isCustomVar = true
 			}
 			name = utils.ToPascalCase(name)
 
@@ -48,12 +42,7 @@ func (cmd command) traverse() {
 				jsonTag = "-"
 			}
 
-			tag := fmt.Sprintf("`json:\"%s\"", jsonTag)
-			if isCustomVar {
-				tag += fmt.Sprintf(" name:\"%s\"", flag["name"])
-			}
-			tag += "`"
-
+			tag := fmt.Sprintf("`json:\"%s\"`", jsonTag)
 			kind := utils.TypeOf(flag["default"])
 			config += fmt.Sprintf("%s %s %s\n", name, kind, tag)
 		}
