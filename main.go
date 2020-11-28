@@ -24,7 +24,7 @@ func main() {
 }
 
 func greet() {
-	name := cli.App.Subcommands["greet"].GetFlag("name").(string)
+	name := config.Config.Greet.Name
 	if name == "" {
 		user, _ := user.Current()
 		name = user.Name

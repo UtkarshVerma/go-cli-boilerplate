@@ -9,9 +9,6 @@ import (
 )
 
 var (
-	// TimeLayout is the time layout which is followed everywhere.
-	TimeLayout = "2006-01-02T15:04:05-07:00"
-
 	// Config is the central configuration struct.
 	Config = &config{}
 )
@@ -44,31 +41,30 @@ func (config *config) update() {
 func update(from *cli.Command, to reflect.Value) {
 	fields := to.Type()
 	for i := 0; i < fields.NumField(); i++ {
-		// Reconstruct the flag name
-		name := fields.Field(i).Name
-		if nameTag := fields.Field(i).Tag.Get("name"); nameTag != "" {
-			name = nameTag
+		// Reconstruct the flag name, and don't update config flag
+		field := utils.ToKebabCase(fields.Field(i).Name)
+		if field == "file" {
+			continue
 		}
-		name = utils.ToKebabCase(name)
 
 		copyTo := to.Field(i)
 		if to.Field(i).Kind() == reflect.Struct {
-			update(from.Subcommands[name], copyTo)
+			update(from.Subcommands[field], copyTo)
 		} else {
-			mustSet := copyTo.IsZero()
+			mustSet := from.GetDefault(field) != from.GetFlag(field)
 
 			switch copyTo.Kind() {
 			case reflect.String:
 				if copyTo.CanSet() && mustSet {
-					copyTo.SetString(from.GetFlag(name).(string))
+					copyTo.SetString(from.GetFlag(field).(string))
 				}
 			case reflect.Int:
 				if copyTo.CanSet() && mustSet {
-					copyTo.SetInt(int64(from.GetFlag(name).(int)))
+					copyTo.SetInt(int64(from.GetFlag(field).(int)))
 				}
 			case reflect.Bool:
 				if copyTo.CanSet() && mustSet {
-					copyTo.SetBool(from.GetFlag(name).(bool))
+					copyTo.SetBool(from.GetFlag(field).(bool))
 				}
 			}
 		}
