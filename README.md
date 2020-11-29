@@ -1,9 +1,7 @@
 # go-cli-boilerplate
-`go-cli-boilerplate` is a modular piece of Go code using which you can build any CLI application from a single YAML schema.<!-- It is written to be minimal and functions similar to [spf13/cobra][cobra].-->
+`go-cli-boilerplate` is a modular piece of Go code using which you can build any CLI application from a single YAML schema.It is written to be minimal and functions similar to [spf13/cobra][cobra].
 
-<!--
 > This project is clearly not as functional as [cobra][cobra], but gets the job done if you're looking for something minimal. This project can also be used as a reference as my motive for this project was to use [reflection][reflection] and [code generation][code-generation] in Go.
--->
 
 ## Quickstart
 Using this project is very easy. All you have to do is:
