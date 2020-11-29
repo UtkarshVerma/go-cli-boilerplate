@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	conf = config.Config
+	conf = config.App
 )
 
 //go:generate go run ./scripts
@@ -24,7 +24,7 @@ func main() {
 }
 
 func greet() {
-	name := config.Config.Greet.Name
+	name := config.App.Greet.Name
 	if name == "" {
 		user, _ := user.Current()
 		name = user.Name

@@ -10,25 +10,25 @@ import (
 )
 
 var (
-	// Config is the central configuration struct.
-	Config = &config{}
+	// App is the central configuration struct.
+	App = &config{}
 )
 
 func init() {
 	if configFlag != "" {
-		Config.File = cli.App.GetFlag(configFlag).(string)
-		Config.init()
+		App.ConfigFile = cli.App.GetFlag(configFlag).(string)
+		App.init()
 
 		// Create config file if not present
-		if utils.FileExists(Config.File) {
-			err := utils.ReadJSON(Config.File, Config)
+		if utils.FileExists(App.ConfigFile) {
+			err := utils.ReadJSON(App.ConfigFile, App)
 			if err != nil {
 				log.Fatal(err)
 			}
-			Config.update()
+			App.update()
 		} else {
-			Config.update()
-			err := utils.WriteJSON(Config, Config.File)
+			App.update()
+			err := utils.WriteJSON(App, App.ConfigFile)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -48,10 +48,11 @@ func traverse(parent *cli.Command, from *cli.Command, to reflect.Value, mustInit
 	fields := to.Type()
 	for i := 0; i < fields.NumField(); i++ {
 		// Reconstruct the flag name, and don't update config flag
-		field := utils.ToKebabCase(fields.Field(i).Name)
-		if field == "file" {
+		field := fields.Field(i).Name
+		if field == "ConfigFile" {
 			continue
 		}
+		field = utils.ToKebabCase(field)
 
 		copyTo := to.Field(i)
 		if to.Field(i).Kind() == reflect.Struct {

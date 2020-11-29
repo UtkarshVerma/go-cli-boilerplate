@@ -8,9 +8,6 @@ flags:
     description: Path to configuration file.
     default: config.json
 
-  - name: gopher
-    description: Show something awesome!
-
 subcommands:
   - name: greet
     description: Get a greeting.

@@ -11,7 +11,7 @@ const configLayout = `package config
 const configFlag = "%s"
 type (
 config struct {
-File string` + "`json:\"-\"`" + `
+ConfigFile string` + "`json:\"-\"`" + `
 %s}
 )
 `
